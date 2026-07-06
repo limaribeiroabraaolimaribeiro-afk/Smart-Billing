@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Billing - Recibo</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="public-page">
+    <div class="public-card">
+      <div class="brand">
+        <div class="brand-mark">SB</div>
+        <div class="brand-name">Smart Billing</div>
+      </div>
+
+      <div id="loadingState" class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="errorState" class="form-error hidden"></div>
+
+      <div id="content" class="hidden">
+        <div class="status-banner badge-pago">Pagamento confirmado</div>
+        <p class="receipt-number">Recibo n&ordm; <span id="receiptNumber"></span></p>
+
+        <div class="public-summary">
+          <div class="row"><span class="label">Cliente</span><span class="value" id="clientName"></span></div>
+          <div class="row"><span class="label">Servico</span><span class="value" id="serviceName"></span></div>
+          <div class="row"><span class="label">Descricao</span><span class="value" id="description"></span></div>
+          <div class="row"><span class="label">Data do pagamento</span><span class="value" id="paidAt"></span></div>
+          <div class="row"><span class="label">Forma de pagamento</span><span class="value" id="paymentMethod"></span></div>
+        </div>
+
+        <div class="public-amount">
+          <div class="label">Valor pago</div>
+          <div class="value" id="amount"></div>
+        </div>
+
+        <a class="btn btn-primary btn-block" id="downloadBtn" href="#">Baixar PDF</a>
+      </div>
+
+      <p class="disclaimer">
+        Este recibo comprova o pagamento recebido e nao substitui nota fiscal quando obrigatoria.
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/recibo.js"></script>
+</body>
+</html>

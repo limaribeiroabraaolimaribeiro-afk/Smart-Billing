@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Billing - Pagamento</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="public-page">
+    <div class="public-card">
+      <div class="brand">
+        <div class="brand-mark">SB</div>
+        <div class="brand-name">Smart Billing</div>
+      </div>
+
+      <div id="loadingState" class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="errorState" class="form-error hidden"></div>
+
+      <div id="content" class="hidden">
+        <div id="statusBanner" class="status-banner hidden"></div>
+
+        <div class="public-summary">
+          <div class="row"><span class="label">Cliente</span><span class="value" id="clientName"></span></div>
+          <div class="row"><span class="label">Servico</span><span class="value" id="serviceName"></span></div>
+          <div class="row"><span class="label">Descricao</span><span class="value" id="description"></span></div>
+          <div class="row"><span class="label">Vencimento</span><span class="value" id="dueDate"></span></div>
+        </div>
+
+        <div class="public-amount">
+          <div class="label">Valor a pagar</div>
+          <div class="value" id="amount"></div>
+        </div>
+
+        <div id="errorPay" class="form-error hidden"></div>
+
+        <button class="btn btn-primary btn-block" id="payBtn">Pagar agora</button>
+        <a class="btn btn-outline btn-block hidden" id="receiptLink" href="#" style="margin-top: 10px;">Ver recibo</a>
+      </div>
+
+      <p class="disclaimer">Pagamento processado com seguranca pelo Mercado Pago.</p>
+    </div>
+  </div>
+
+  <script src="/js/pagar.js"></script>
+</body>
+</html>

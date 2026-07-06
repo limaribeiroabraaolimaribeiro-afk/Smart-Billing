@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Billing - Painel</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SB</div>
+        <div class="brand-name">Smart Billing</div>
+      </div>
+
+      <button class="nav-link active" data-view="charges">Cobrancas</button>
+      <button class="nav-link" data-view="clients">Clientes</button>
+
+      <div class="sidebar-footer">
+        <button class="nav-link" id="logoutBtn">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <!-- ==================== VIEW: COBRANCAS ==================== -->
+      <section id="view-charges">
+        <div class="topbar">
+          <div>
+            <h1>Cobrancas</h1>
+            <p>Acompanhe vencimentos, envie lembretes e confira recibos.</p>
+          </div>
+          <button class="btn btn-primary" id="openNewChargeBtn">+ Nova cobranca</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Todas as cobrancas</h2>
+            <div class="filter-bar" id="filterBar">
+              <button class="filter-chip active" data-filter="todos">Todos</button>
+              <button class="filter-chip" data-filter="pendente">Pendente</button>
+              <button class="filter-chip" data-filter="vence_hoje">Vence hoje</button>
+              <button class="filter-chip" data-filter="atrasado">Atrasado</button>
+              <button class="filter-chip" data-filter="pago">Pago</button>
+              <button class="filter-chip" data-filter="cancelado">Cancelado</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Servico</th>
+                  <th>Valor</th>
+                  <th>Vencimento</th>
+                  <th>Status</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="chargesTableBody"></tbody>
+            </table>
+            <div id="chargesEmptyState" class="empty-state hidden">Nenhuma cobranca encontrada para este filtro.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW: CLIENTES ==================== -->
+      <section id="view-clients" class="hidden">
+        <div class="topbar">
+          <div>
+            <h1>Clientes</h1>
+            <p>Cadastre e gerencie os clientes que recebem cobrancas.</p>
+          </div>
+          <button class="btn btn-primary" id="openNewClientBtn">+ Novo cliente</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Todos os clientes</h2>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>WhatsApp</th>
+                  <th>Email</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="clientsTableBody"></tbody>
+            </table>
+            <div id="clientsEmptyState" class="empty-state hidden">Nenhum cliente cadastrado ainda.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL: NOVO CLIENTE ==================== -->
+  <div class="modal-overlay hidden" id="clientModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Novo cliente</h2>
+        <button class="icon-btn" data-close-modal="clientModal">&times;</button>
+      </div>
+      <div id="clientFormError" class="form-error hidden"></div>
+      <form id="clientForm">
+        <div class="field">
+          <label for="clientName">Nome</label>
+          <input type="text" id="clientName" required />
+        </div>
+        <div class="field">
+          <label for="clientWhatsapp">WhatsApp</label>
+          <input type="text" id="clientWhatsapp" placeholder="(11) 99999-9999" required />
+        </div>
+        <div class="field">
+          <label for="clientEmail">Email (opcional)</label>
+          <input type="email" id="clientEmail" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" data-close-modal="clientModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="saveClientBtn">Salvar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: NOVA COBRANCA ==================== -->
+  <div class="modal-overlay hidden" id="chargeModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Nova cobranca</h2>
+        <button class="icon-btn" data-close-modal="chargeModal">&times;</button>
+      </div>
+      <div id="chargeFormError" class="form-error hidden"></div>
+      <form id="chargeForm">
+        <div class="field">
+          <label for="chargeClient">Cliente</label>
+          <select id="chargeClient" required></select>
+        </div>
+        <div class="field">
+          <label for="chargeService">Nome do servico</label>
+          <input type="text" id="chargeService" placeholder="Ex: Mensalidade Julho" required />
+        </div>
+        <div class="field">
+          <label for="chargeDescription">Descricao</label>
+          <textarea id="chargeDescription" rows="2" placeholder="Detalhes do servico (opcional)"></textarea>
+        </div>
+        <div class="field">
+          <label for="chargeAmount">Valor (R$)</label>
+          <input type="number" id="chargeAmount" min="0.01" step="0.01" required />
+        </div>
+        <div class="field">
+          <label for="chargeDueDate">Data de vencimento</label>
+          <input type="date" id="chargeDueDate" required />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" data-close-modal="chargeModal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="saveChargeBtn">Criar cobranca</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
