@@ -20,7 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Arquivos estaticos do frontend (admin, css, js, paginas publicas)
-app.use(express.static(PUBLIC_DIR));
+// index:false porque as rotas "/", "/admin", "/pagar/:id" e "/recibo/:id"
+// abaixo controlam explicitamente qual HTML e servido em cada caso.
+app.use(express.static(PUBLIC_DIR, { index: false }));
 
 // ------------------------------
 // API
@@ -35,8 +37,15 @@ app.use('/api/public', publicRoutes);
 // ------------------------------
 // Paginas do frontend (SPA simples por pagina)
 // ------------------------------
+
+// Pagina inicial: landing do Smart Billing (nao o README).
 app.get('/', (req, res) => {
-  res.redirect('/admin/login.html');
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// Login do painel administrativo: /admin
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'login.html'));
 });
 
 // Pagina publica do cliente: /pagar/:chargeId

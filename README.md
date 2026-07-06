@@ -2,6 +2,15 @@
 
 Sistema simples de cobranca para clientes: cadastro de clientes, criacao de cobrancas com vencimento, pagina publica de pagamento com redirecionamento para o **Checkout Pro do Mercado Pago**, geracao automatica de **recibo em PDF** apos pagamento aprovado, e estrutura pronta para **cobranca automatica via WhatsApp**.
 
+> **Este e um sistema com backend (Node/Express + Supabase), nao um site estatico.**
+> Este README e apenas documentacao — ele **nunca** e a pagina inicial do sistema.
+> A pagina inicial real e servida pelo Express em `/` (ver [`public/index.html`](public/index.html)).
+> **Nao use GitHub Pages** para publicar este projeto: o GitHub Pages so serve arquivos estaticos
+> (por isso ele acaba renderizando o README) e nao executa o backend Node necessario para login,
+> banco de dados, Mercado Pago e geracao de PDF. Para colocar o Smart Billing no ar, use o
+> [Render](https://render.com) (ou outro provedor com suporte a Node), conforme a secao
+> [9. Deploy em producao (Render)](#9-deploy-em-producao-render) abaixo.
+
 ## Stack
 
 - **Frontend:** HTML, CSS e JavaScript puro (responsivo), servido como arquivos estaticos pelo proprio backend.
@@ -18,7 +27,8 @@ smart-billing/
 ├── database/
 │   └── schema.sql              # Script para criar as tabelas no Supabase
 ├── public/                     # Frontend (servido como estatico pelo Express)
-│   ├── admin/                  # Painel administrativo (login + dashboard)
+│   ├── index.html               # Landing page do Smart Billing (rota "/")
+│   ├── admin/                  # Painel administrativo (login em /admin + dashboard)
 │   ├── pagar/                  # Pagina publica de pagamento (/pagar/:chargeId)
 │   ├── recibo/                 # Pagina publica de recibo (/recibo/:chargeId)
 │   ├── css/style.css
@@ -32,8 +42,9 @@ smart-billing/
 │   ├── routes/                 # Definicao das rotas Express
 │   ├── services/                # Recibo (PDF), WhatsApp, agendador de lembretes
 │   ├── utils/                   # Helpers (status, formatacao, mensagens)
-│   └── app.js                   # Configuracao do Express
+│   └── app.js                   # Configuracao do Express (rotas "/", "/admin", "/pagar/:id", "/recibo/:id")
 ├── server.js                    # Ponto de entrada da aplicacao
+├── render.yaml                   # Blueprint para deploy no Render
 ├── package.json
 ├── .env.example
 └── .gitignore
@@ -109,7 +120,8 @@ npm start
 
 Acesse:
 
-- Painel admin: `http://localhost:3000/admin/login.html`
+- Pagina inicial (landing): `http://localhost:3000/`
+- Painel admin (login): `http://localhost:3000/admin`
 - Pagina publica de pagamento: `http://localhost:3000/pagar/:chargeId`
 - Pagina publica de recibo: `http://localhost:3000/recibo/:chargeId`
 
@@ -139,7 +151,35 @@ Regras implementadas em [`src/services/billingScheduler.js`](src/services/billin
 
 Hoje as mensagens sao registradas na tabela `whatsapp_messages` (status `pending`, `sent` ou `failed`). O envio real depende de um provedor de WhatsApp (WhatsApp Cloud API, Twilio, Z-API etc.) ser configurado em `WHATSAPP_PROVIDER_URL`/`WHATSAPP_PROVIDER_TOKEN` e implementado no bloco indicado dentro de `sendAutomaticMessage` em [`src/services/whatsappService.js`](src/services/whatsappService.js). O envio **manual** (botao no painel) ja funciona hoje via link `wa.me`.
 
-## 9. Seguranca
+## 9. Deploy em producao (Render)
+
+O Smart Billing tem backend Node/Express, banco Supabase e integracao com Mercado Pago — por isso **nao pode** ser publicado no GitHub Pages (que serve apenas arquivos estaticos e nao roda Node, nem processa `.env`). Use o [Render](https://render.com) como Web Service:
+
+### Opcao A — usando o `render.yaml` (Blueprint)
+
+1. Suba o projeto para um repositorio no GitHub (ja incluso: [`render.yaml`](render.yaml)).
+2. No [dashboard do Render](https://dashboard.render.com), clique em **New > Blueprint** e selecione o repositorio.
+3. O Render vai ler o `render.yaml` e propor a criacao do servico `smart-billing` automaticamente.
+4. Preencha as variaveis marcadas como obrigatorias (`BASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `JWT_SECRET`, `MERCADOPAGO_ACCESS_TOKEN`, etc. — veja a secao [5. Variaveis de ambiente](#5-variaveis-de-ambiente)).
+5. Clique em **Apply** para criar e implantar o servico.
+
+### Opcao B — criando o Web Service manualmente
+
+1. No dashboard do Render, clique em **New > Web Service** e conecte o repositorio do GitHub.
+2. Configure:
+   - **Runtime:** Node
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+3. Em **Environment**, adicione todas as variaveis do `.env` (nunca commite o `.env` real — use `.env.example` apenas como referencia).
+4. **Nao** defina a variavel `PORT` manualmente: o Render injeta essa variavel automaticamente e o `server.js` ja usa `process.env.PORT`.
+5. Depois do primeiro deploy, copie a URL publica gerada pelo Render (ex: `https://smart-billing.onrender.com`) e atualize a variavel de ambiente `BASE_URL` com essa mesma URL — ela e usada para montar os links de pagamento/recibo e a `notification_url` do webhook do Mercado Pago.
+6. Configure o webhook do Mercado Pago (painel de desenvolvedores) apontando para `{BASE_URL}/api/webhooks/mercadopago`.
+
+### Sobre o GitHub Pages
+
+Se o GitHub Pages estiver habilitado nas configuracoes do repositorio (**Settings > Pages**), desative-o (`Build and deployment > Source: None`). O Pages nao executa o backend Node e, sem um `index.html` na raiz publicada, ele acaba exibindo o `README.md` renderizado — que e o comportamento estatico padrao do GitHub, nao um problema do codigo da aplicacao.
+
+## 10. Seguranca
 
 - O Access Token do Mercado Pago e a Service Role Key do Supabase existem **somente no backend** (`.env`), nunca no frontend.
 - O webhook sempre confirma o pagamento consultando a API oficial do Mercado Pago antes de dar baixa na cobranca (nao confia em dados enviados na notificacao).
