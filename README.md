@@ -173,6 +173,7 @@ window.SMART_BILLING_CONFIG = {
    https://SEU_PROJECT_REF.supabase.co/storage/v1/object/public/smart-billing/pagar/index.html
    ```
 4. Essa e a razao de `/pagar` e `/recibo` usarem **query string** (`?id=chargeId`) em vez de path (`/pagar/:chargeId`): o Storage nao faz reescrita de rotas, entao o id da cobranca precisa vir como parametro (`.../pagar/index.html?id=abc123`). O link copiado no painel e as mensagens de WhatsApp ja usam esse formato.
+5. **Content-Type dos arquivos**: pelo dashboard do Supabase (drag-and-drop), o Storage detecta o `Content-Type` automaticamente pela extensao (`.html` → `text/html`, `.css` → `text/css`, `.js` → `text/javascript`). Se preferir subir via CLI/API (`supabase storage cp`, `curl`, SDK), informe o `Content-Type` explicitamente para cada arquivo — caso contrario o Storage assume `text/plain` ou `application/octet-stream` e os `.html` sao baixados/exibidos como texto cru em vez de renderizados pelo navegador.
 
 ### Opcao B — Edge Function propria (`app`)
 

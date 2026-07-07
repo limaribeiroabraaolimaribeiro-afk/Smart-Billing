@@ -137,7 +137,7 @@ create trigger trg_charges_updated_at
 -- ============================================================
 -- Observacao sobre RLS (Row Level Security):
 -- Este backend acessa o Supabase usando a SERVICE ROLE KEY,
--- exclusivamente pelo servidor Node/Express (nunca pelo navegador).
+-- exclusivamente pelas Supabase Edge Functions (nunca pelo navegador).
 -- Por isso as tabelas acima nao precisam de policies de RLS para o
 -- funcionamento do sistema. Caso deseje habilitar RLS por seguranca
 -- extra, mantenha todo o acesso exclusivamente via service role.
