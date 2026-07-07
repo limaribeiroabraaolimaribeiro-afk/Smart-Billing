@@ -82,7 +82,7 @@
 
     if (charge.status === 'pago') {
       payBtn.classList.add('hidden');
-      receiptLink.href = `/recibo/index.html?id=${chargeId}`;
+      receiptLink.href = `../recibo/index.html?id=${chargeId}`;
       receiptLink.classList.remove('hidden');
     } else if (charge.status === 'cancelado') {
       payBtn.classList.add('hidden');

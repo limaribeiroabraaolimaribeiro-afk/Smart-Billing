@@ -29,7 +29,7 @@
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
     Api.clearToken();
-    window.location.href = '/admin/login.html';
+    window.location.href = 'login.html';
   });
 
   // ------------------------------------------------------------
@@ -245,7 +245,7 @@
 
     document.querySelectorAll('[data-receipt]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        window.open(`/recibo/index.html?id=${btn.dataset.receipt}`, '_blank');
+        window.open(`../recibo/index.html?id=${btn.dataset.receipt}`, '_blank');
       });
     });
 

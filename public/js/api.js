@@ -42,7 +42,7 @@ const Api = {
 
     if (res.status === 401 && auth) {
       this.clearToken();
-      window.location.href = '/admin/login.html';
+      window.location.href = 'login.html';
       return Promise.reject(new Error('Sessao expirada.'));
     }
 
@@ -72,7 +72,7 @@ const Api = {
 
 function requireAdminAuth() {
   if (!Api.isAuthenticated()) {
-    window.location.href = '/admin/login.html';
+    window.location.href = 'login.html';
   }
 }
 

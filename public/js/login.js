@@ -1,6 +1,6 @@
 (function () {
   if (Api.isAuthenticated()) {
-    window.location.href = '/admin/dashboard.html';
+    window.location.href = 'dashboard.html';
     return;
   }
 
@@ -20,7 +20,7 @@
     try {
       const data = await Api.post('/admin-login', { email, password }, { auth: false });
       Api.setToken(data.token);
-      window.location.href = '/admin/dashboard.html';
+      window.location.href = 'dashboard.html';
     } catch (err) {
       errorBox.textContent = err.message;
       errorBox.classList.remove('hidden');
