@@ -1,7 +1,15 @@
 (function () {
   function chargeIdFromUrl() {
+    const byQuery = new URLSearchParams(window.location.search).get('id');
+    if (byQuery) return byQuery;
+
     const parts = window.location.pathname.split('/').filter(Boolean);
-    return parts[1]; // /recibo/:chargeId
+    const idx = parts.indexOf('recibo');
+    return idx !== -1 ? parts[idx + 1] : undefined;
+  }
+
+  function functionsBaseUrl() {
+    return window.SMART_BILLING_CONFIG.SUPABASE_FUNCTIONS_URL.replace(/\/$/, '');
   }
 
   function formatCurrencyBRL(value) {
@@ -27,8 +35,15 @@
   const content = document.getElementById('content');
 
   async function loadReceipt() {
+    if (!chargeId) {
+      loadingState.classList.add('hidden');
+      errorState.textContent = 'Link de recibo invalido: id da cobranca nao informado.';
+      errorState.classList.remove('hidden');
+      return;
+    }
+
     try {
-      const res = await fetch(`/api/public/receipts/${chargeId}`);
+      const res = await fetch(`${functionsBaseUrl()}/receipt/${chargeId}`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Recibo indisponivel.');
@@ -50,11 +65,19 @@
     document.getElementById('paymentMethod').textContent =
       PAYMENT_METHOD_LABELS[receipt.payment_method] || receipt.payment_method || 'Nao informado';
     document.getElementById('amount').textContent = formatCurrencyBRL(receipt.amount);
-    document.getElementById('downloadBtn').href = `/api/public/receipts/${chargeId}/pdf`;
 
     loadingState.classList.add('hidden');
     content.classList.remove('hidden');
   }
+
+  // O PDF nao e mais gerado no servidor (Edge Functions nao rodam pdfkit de
+  // forma confiavel). O recibo e uma pagina HTML imprimivel: o botao abaixo
+  // aciona o dialogo de impressao do navegador, onde o cliente pode escolher
+  // "Salvar como PDF".
+  document.getElementById('downloadBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.print();
+  });
 
   loadReceipt();
 })();

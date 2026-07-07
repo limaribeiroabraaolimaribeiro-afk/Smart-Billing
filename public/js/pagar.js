@@ -6,9 +6,22 @@
     vence_hoje: { text: 'Esta cobranca vence hoje.', className: 'badge-vence_hoje' },
   };
 
+  // O frontend agora e 100% estatico (Supabase Storage, Edge Function "app"
+  // ou qualquer host de arquivos estaticos), entao o id da cobranca vem por
+  // query string (?id=...), o que funciona em qualquer lugar sem precisar
+  // de reescrita de rotas no servidor. Path "/pagar/:chargeId" (caso o host
+  // faca esse rewrite, como a Edge Function "app") tambem e aceito.
   function chargeIdFromUrl() {
+    const byQuery = new URLSearchParams(window.location.search).get('id');
+    if (byQuery) return byQuery;
+
     const parts = window.location.pathname.split('/').filter(Boolean);
-    return parts[1]; // /pagar/:chargeId
+    const idx = parts.indexOf('pagar');
+    return idx !== -1 ? parts[idx + 1] : undefined;
+  }
+
+  function functionsBaseUrl() {
+    return window.SMART_BILLING_CONFIG.SUPABASE_FUNCTIONS_URL.replace(/\/$/, '');
   }
 
   function formatCurrencyBRL(value) {
@@ -32,8 +45,15 @@
   const errorPay = document.getElementById('errorPay');
 
   async function loadCharge() {
+    if (!chargeId) {
+      loadingState.classList.add('hidden');
+      errorState.textContent = 'Link de pagamento invalido: id da cobranca nao informado.';
+      errorState.classList.remove('hidden');
+      return;
+    }
+
     try {
-      const res = await fetch(`/api/public/charges/${chargeId}`);
+      const res = await fetch(`${functionsBaseUrl()}/public-charge/${chargeId}`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Cobranca nao encontrada.');
@@ -62,7 +82,7 @@
 
     if (charge.status === 'pago') {
       payBtn.classList.add('hidden');
-      receiptLink.href = `/recibo/${chargeId}`;
+      receiptLink.href = `/recibo/index.html?id=${chargeId}`;
       receiptLink.classList.remove('hidden');
     } else if (charge.status === 'cancelado') {
       payBtn.classList.add('hidden');
@@ -78,7 +98,9 @@
     payBtn.textContent = 'Redirecionando...';
 
     try {
-      const res = await fetch(`/api/payments/create-preference/${chargeId}`, { method: 'POST' });
+      const res = await fetch(`${functionsBaseUrl()}/create-preference/${chargeId}`, {
+        method: 'POST',
+      });
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Nao foi possivel iniciar o pagamento.');

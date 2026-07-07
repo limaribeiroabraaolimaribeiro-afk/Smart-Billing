@@ -18,7 +18,7 @@
     const password = document.getElementById('password').value;
 
     try {
-      const data = await Api.post('/auth/login', { email, password }, { auth: false });
+      const data = await Api.post('/admin-login', { email, password }, { auth: false });
       Api.setToken(data.token);
       window.location.href = '/admin/dashboard.html';
     } catch (err) {

@@ -568,6 +568,16 @@ table.data-table tr:last-child td { border-bottom: none; }
   .main-content { padding: 20px 16px 50px; }
 }
 
+/* ---------------------------------------------------------
+   Impressao (recibo em HTML imprimivel / "Salvar como PDF")
+--------------------------------------------------------- */
+@media print {
+  body { background: #fff; }
+  .public-page { background: #fff; min-height: auto; padding: 0; }
+  .public-card { box-shadow: none; border: 1px solid var(--color-border); }
+  .no-print { display: none !important; }
+}
+
 @media (max-width: 520px) {
   table.data-table thead { display: none; }
 

@@ -1,0 +1,35 @@
+# Configuracao do Supabase CLI para o projeto Smart Billing.
+# "project_id" e apenas um identificador local do CLI - rode `supabase link
+# --project-ref <SEU_PROJECT_REF>` para conectar este repositorio ao seu
+# projeto real no Supabase.
+project_id = "smart-billing"
+
+# Todas as functions abaixo tem verify_jwt = false porque o Smart Billing
+# usa autenticacao propria (JWT assinado por admin-login, validado
+# manualmente em supabase/functions/_shared/auth.ts), e nao o Supabase Auth.
+# Sem isso, o gateway de functions rejeitaria o token customizado do admin
+# antes mesmo de chegar no codigo da function.
+
+[functions.admin-login]
+verify_jwt = false
+
+[functions.clients]
+verify_jwt = false
+
+[functions.charges]
+verify_jwt = false
+
+[functions.public-charge]
+verify_jwt = false
+
+[functions.create-preference]
+verify_jwt = false
+
+[functions.mercadopago-webhook]
+verify_jwt = false
+
+[functions.receipt]
+verify_jwt = false
+
+[functions.whatsapp-cron]
+verify_jwt = false

@@ -245,7 +245,7 @@
 
     document.querySelectorAll('[data-receipt]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        window.open(`/recibo/${btn.dataset.receipt}`, '_blank');
+        window.open(`/recibo/index.html?id=${btn.dataset.receipt}`, '_blank');
       });
     });
 

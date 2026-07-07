@@ -1,5 +1,18 @@
-// Helper de acesso a API usado pelas paginas do painel admin.
+// Helper de acesso as Supabase Edge Functions, usado pelo painel admin.
+// Cada "recurso" (clients, charges, admin-login...) e uma Edge Function
+// separada - por isso a base da URL vem de window.SMART_BILLING_CONFIG
+// (ver public/js/config.js), em vez de um backend Express proprio.
 const TOKEN_KEY = 'smartbilling_token';
+
+function functionsBaseUrl() {
+  const url = window.SMART_BILLING_CONFIG && window.SMART_BILLING_CONFIG.SUPABASE_FUNCTIONS_URL;
+  if (!url) {
+    throw new Error(
+      'SUPABASE_FUNCTIONS_URL nao configurado. Edite public/js/config.js.'
+    );
+  }
+  return url.replace(/\/$/, '');
+}
 
 const Api = {
   getToken() {
@@ -21,7 +34,7 @@ const Api = {
       if (token) headers.Authorization = `Bearer ${token}`;
     }
 
-    const res = await fetch(`/api${path}`, {
+    const res = await fetch(`${functionsBaseUrl()}${path}`, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,

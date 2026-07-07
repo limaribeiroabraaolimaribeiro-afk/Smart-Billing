@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <div class="public-page">
+  <div class="public-page" id="printArea">
     <div class="public-card">
       <div class="brand">
         <div class="brand-mark">SB</div>
@@ -37,7 +37,9 @@
           <div class="value" id="amount"></div>
         </div>
 
-        <a class="btn btn-primary btn-block" id="downloadBtn" href="#">Baixar PDF</a>
+        <button class="btn btn-primary btn-block no-print" id="downloadBtn" type="button">
+          Imprimir / Salvar PDF
+        </button>
       </div>
 
       <p class="disclaimer">
@@ -46,6 +48,7 @@
     </div>
   </div>
 
+  <script src="/js/config.js"></script>
   <script src="/js/recibo.js"></script>
 </body>
 </html>

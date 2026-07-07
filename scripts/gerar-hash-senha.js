@@ -1,4 +1,5 @@
-// Gera o hash bcrypt de uma senha, para usar em ADMIN_PASSWORD_HASH no .env
+// Gera o hash bcrypt de uma senha, para usar no secret ADMIN_PASSWORD_HASH
+// das Supabase Edge Functions (supabase secrets set ADMIN_PASSWORD_HASH=...).
 // Uso: node scripts/gerar-hash-senha.js "minhasenha"
 const bcrypt = require('bcryptjs');
 
@@ -10,6 +11,6 @@ if (!senha) {
 }
 
 const hash = bcrypt.hashSync(senha, 10);
-console.log('\nHash gerado (copie para ADMIN_PASSWORD_HASH no .env):\n');
+console.log('\nHash gerado (copie para o secret ADMIN_PASSWORD_HASH):\n');
 console.log(hash);
 console.log('');
