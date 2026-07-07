@@ -95,19 +95,22 @@ create index if not exists idx_whatsapp_messages_charge_id on whatsapp_messages(
 
 -- ------------------------------------------------------------
 -- Tabela: settings (configuracoes gerais do sistema)
+-- value e jsonb para suportar qualquer tipo (texto, numero, booleano)
+-- de forma tipada. Strings precisam ser JSON validos (entre aspas duplas).
 -- ------------------------------------------------------------
 create table if not exists settings (
   id uuid primary key default gen_random_uuid(),
   key text not null unique,
-  value text,
+  value jsonb,
   updated_at timestamptz not null default now()
 );
 
 -- Configuracoes padrao
+-- Exemplos de casts validos: '"texto"'::jsonb | 'true'::jsonb | '3'::jsonb
 insert into settings (key, value)
 values
-  ('company_name', 'Smart Billing'),
-  ('currency', 'BRL')
+  ('company_name', '"Smart Billing"'::jsonb),
+  ('currency', '"BRL"'::jsonb)
 on conflict (key) do nothing;
 
 -- ------------------------------------------------------------
